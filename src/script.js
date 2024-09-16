@@ -38,42 +38,21 @@ window.addEventListener('resize', () => {
 
 //* Textures
 // const textureLoader = new THREE.TextureLoader()
-// const sunTexture = textureLoader.load('./textures/matcaps/4.png')
-// const earthTexture = textureLoader.load('./textures/matcaps/7.png')
+// const sunTexture = textureLoader.load('./textures/matcaps/4.jpg')
+// const earthTexture = textureLoader.load('./textures/matcaps/7.jpg')
 
 
-// earthTexture.colorSpace = THREE.SRGBColorSpace
-
-//* Orbit planet function
-function orbitPlanet(planet, radius, speed) {
-    let angle = 0
-
-    gsap.to(planet.position, {
-        duration: speed,
-        repeat: -1,  // Infinite loop
-        modifiers: {
-            x: () => Math.cos(angle) * radius,  // Update X position based on the angle
-            z: () => Math.sin(angle) * radius,  // Update Z position based on the angle
-        },
-        onUpdate: () => {
-            angle += 0.02;  // Increment the angle each time the update happens
-        }
-    });
-}
-
-// Earth orbits at radius 5 with a 10s period
+// earthTexture.colorSpace = THREE.SRGBColorSpac
 
 
 //* Meshes
 const planets = [];
-
-// Create a planet object and add it to the scene and the planets array
-function createPlanet(size, distanceFromSun, texturePath, orbitSpeed) {
+function createPlanet(size, distanceFromSun, texturePath, orbitSpeed,) {
     const textureLoader = new THREE.TextureLoader();
     const planetTexture = textureLoader.load(texturePath);
     planetTexture.colorSpace = THREE.SRGBColorSpace
 
-    const planetMaterial = new THREE.MeshBasicMaterial({ map: planetTexture });
+    const planetMaterial = new THREE.MeshMatcapMaterial({ matcap: planetTexture });
     const planetGeometry = new THREE.SphereGeometry(size, 32, 32);
     const planet = new THREE.Mesh(planetGeometry, planetMaterial);
 
@@ -85,37 +64,39 @@ function createPlanet(size, distanceFromSun, texturePath, orbitSpeed) {
     planets.push(planet);  // Add to planets array for updating the orbit in the render loop
 }
 
-// Create the sun and some planets
-const sunGeometry = new THREE.SphereGeometry(.5, 32, 32);
-const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+
+//#region //* Sun
+const textureLoader = new THREE.TextureLoader();
+const sunTexture = textureLoader.load('./textures/matcaps/sun.jpg');
+sunTexture.colorSpace = THREE.SRGBColorSpace
+
+const sunGeometry = new THREE.SphereGeometry(2, 32, 32);
+const sunMaterial = new THREE.MeshMatcapMaterial({ matcap: sunTexture });
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 scene.add(sun);
 
-// Create planets with different sizes, distances, textures, and speeds
-createPlanet(0.1, 5, './textures/matcaps/7.png', 0.01);  // Earth
-createPlanet(0.09, 7, './textures/matcaps/1.png', 0.008);  // Mars
-createPlanet(1.0, 9, './textures/matcaps/6.png', 0.005);  // Jupiter
-
-//#region //* Sun
-// const material = new THREE.MeshMatcapMaterial({
-//     matcap: sunTexture
-// })
-// const geometry = new THREE.SphereGeometry(.5, 64, 64)
-// const sun = new THREE.Mesh(geometry, material)
-// scene.add(sun)
-// //#endregion
-
-// //#region //* Sun
-// const earthMaterial = new THREE.MeshMatcapMaterial({
-//     matcap: earthTexture
-// })
-// const geometryEarth = new THREE.SphereGeometry(.1, 64, 64)
-// const earth = new THREE.Mesh(geometryEarth, earthMaterial)
-// earth.position.set(2, 0, 0)
-// scene.add(earth)
-
-// orbitPlanet(earth, 5, 10);
 //#endregion
+
+//* Lights
+// const ambientLight = new THREE.AmbientLight(0xffffff, 0.9)
+// scene.add(ambientLight)
+
+// const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+// scene.add(directionalLight)
+// const pointLight = new THREE.PointLight(0xffffff, 1, 100)
+// // pointLight.position.set(50, 50, 50)
+// scene.add(pointLight)
+
+// Create planets with different sizes, distances, textures, and speeds
+createPlanet(0.05, 1, './textures/matcaps/mercury.jpg', 0.02);  // Mercury
+createPlanet(0.1, 3, './textures/matcaps/venus.jpg', 0.01);  // Venus
+createPlanet(0.1, 5, './textures/matcaps/earth.jpg', 0.009);  // Earth
+createPlanet(0.09, 7, './textures/matcaps/mars.jpg', 0.008);  // Mars
+createPlanet(1.0, 9, './textures/matcaps/jupiter.jpg', 0.007);  // Jupiter
+createPlanet(0.8, 11, './textures/matcaps/saturn.jpg', 0.006, true);  // Saturn
+createPlanet(0.5, 13, './textures/matcaps/uranus.jpg', 0.005);  // Uranus
+createPlanet(0.5, 14, './textures/matcaps/neptune.jpg', 0.004);  // Neptune
+
 
 /**
  * Camera
@@ -124,7 +105,7 @@ createPlanet(1.0, 9, './textures/matcaps/6.png', 0.005);  // Jupiter
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 1
 camera.position.y = 1
-camera.position.z = 10
+camera.position.z = 20
 
 scene.add(camera)
 
